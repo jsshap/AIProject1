@@ -95,15 +95,8 @@ def depthFirstSearch(problem):
     [((34, 15), 'South', 1), ((33, 16), 'West', 1)]
     '''
 
-    #print problem.getStartState()
-    #print problem.getSuccessors(problem.getStartState())
 
     startNode = sNode(start, None, 0, None)
-
-    #print startNode.state
-    #startNode.state = problem.getStartState()
-
-
 
     frontier = util.Stack()
     explored= []
@@ -147,7 +140,29 @@ class sNode:
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    start = problem.getStartState()
+    isGoal = problem.isGoalState(problem.getStartState())
+    succs = problem.getSuccessors(problem.getStartState())
+
+
+    startNode = sNode(start, None, 0, None)
+
+    frontier = util.Queue()
+    explored= []
+    frontier.push(startNode)
+    while not frontier.isEmpty():
+        curr = frontier.pop()
+        if problem.isGoalState(curr.state):
+            return solution(curr)
+        elif not curr.state in explored:
+            explored.append(curr.state)
+            for s in problem.getSuccessors(curr.state):
+                st = s[0]
+                if st not in explored:
+                    frontier.push(sNode(s[0], s[1], s[2], curr))
+
+    return False
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
