@@ -98,7 +98,7 @@ def depthFirstSearch(problem):
     #print problem.getStartState()
     #print problem.getSuccessors(problem.getStartState())
 
-    startNode = sNode(start, None, 0)
+    startNode = sNode(start, None, 0, None)
 
     #print startNode.state
     #startNode.state = problem.getStartState()
@@ -108,51 +108,42 @@ def depthFirstSearch(problem):
     frontier = util.Stack()
     explored= []
     frontier.push(startNode)
-    counter =0
-    stackSize = 1
     while not frontier.isEmpty():
-
         curr = frontier.pop()
-        print curr
-        print curr.state
-        stackSize -= 1
         if problem.isGoalState(curr.state):
             return solution(curr)
         elif not curr.state in explored:
             explored.append(curr.state)
-            added = 0
             print problem.getSuccessors(curr.state)
             for s in problem.getSuccessors(curr.state):
                 st = s[0]
-                added += 1
-                #print explored
                 if st not in explored:
-                    frontier.push(sNode(s[0], s[1], s[2]))
-                    stackSize+=1
-            print added
-        counter += 1
-        #print counter
-        print stackSize
+                    frontier.push(sNode(s[0], s[1], s[2], curr))
+
     return False
             
 def solution(node):
-    print "HERE"
     sol = []
-    while node.action is not None:
-        sol.append(None)
+    while node.parent is not None:
+        sol.append(node.action)
+        node = node.parent
+    sol.reverse()
+    return sol
 
 
 
 class sNode:
+    parent = None
     action = None
     costFromParent = None
     state = None
 
 
-    def __init__(self, state, action, cost):
+    def __init__(self, state, action, cost, parent):
         self.state = state
         self.action = action
         self.costFromParent = cost
+        self.parent = parent
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
