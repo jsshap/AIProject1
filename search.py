@@ -130,12 +130,15 @@ class sNode:
     costFromParent = None
     state = None
 
+    cumCost = 0
 
-    def __init__(self, state, action, cost, parent):
+    def __init__(self, state, action, cost, parent, cumCost = None, aStarPrior = None):
         self.state = state
         self.action = action
         self.costFromParent = cost
         self.parent = parent
+        self.cumCost = cumCost
+        self.aStarPrior=aStarPrior
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
@@ -164,9 +167,29 @@ def breadthFirstSearch(problem):
     return False
 
 def uniformCostSearch(problem):
-    """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    start = problem.getStartState()
+    isGoal = problem.isGoalState(problem.getStartState())
+
+
+    startNode = sNode(start, None, 0, None, cumCost= 0)
+
+    frontier = util.PriorityQueue()
+    explored= []
+    frontier.push((startNode), 0)
+    while not frontier.isEmpty():
+        curr = frontier.pop()
+        if problem.isGoalState(curr.state):
+            return solution(curr)
+        elif not curr.state in explored:
+            explored.append(curr.state)
+            for s in problem.getSuccessors(curr.state):
+                st = s[0]
+                if st not in explored:
+                    #construct node with cumCost = parent + cost and push at that priority
+                    frontier.push(sNode(s[0], s[1], s[2], curr, cumCost= (curr.cumCost + s[2])), curr.cumCost + s[2])
+
+    return False
 
 def nullHeuristic(state, problem=None):
     """
@@ -178,7 +201,28 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    start = problem.getStartState()
+    isGoal = problem.isGoalState(problem.getStartState())
+
+
+    startNode = sNode(start, None, 0, None, cumCost=0, aStarPrior = 0 + heuristic(start, problem))
+
+    frontier = util.PriorityQueue()
+    explored= []
+    frontier.push((startNode), 0)
+    while not frontier.isEmpty():
+        curr = frontier.pop()
+        if problem.isGoalState(curr.state):
+            return solution(curr)
+        elif not curr.state in explored:
+            explored.append(curr.state)
+            for s in problem.getSuccessors(curr.state):
+                st = s[0]
+                if st not in explored:
+                    #construct node with cumCost = parent + cost and priority = cumcost + heuristic push at that priority
+                    frontier.push(sNode(s[0], s[1], s[2], curr, cumCost= (curr.cumCost + s[2])), curr.cumCost + s[2] + heuristic(s[0], problem))
+
+    return False
 
 
 # Abbreviations
