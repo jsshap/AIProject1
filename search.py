@@ -89,7 +89,7 @@ def depthFirstSearch(problem):
     #"*** YOUR CODE HERE ***"
     start = problem.getStartState()
     isGoal = problem.isGoalState(problem.getStartState())
-    succs = problem.getSuccessors(problem.getStartState())
+
     '''
     succs: [('B', '0:A->B', 1.0), ('C', '1:A->C', 2.0), ('D', '2:A->D', 4.0)]
     [((34, 15), 'South', 1), ((33, 16), 'West', 1)]
@@ -143,7 +143,6 @@ def breadthFirstSearch(problem):
 
     start = problem.getStartState()
     isGoal = problem.isGoalState(problem.getStartState())
-    succs = problem.getSuccessors(problem.getStartState())
 
 
     startNode = sNode(start, None, 0, None)
