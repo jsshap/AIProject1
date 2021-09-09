@@ -92,40 +92,67 @@ def depthFirstSearch(problem):
     succs = problem.getSuccessors(problem.getStartState())
     '''
     succs: [('B', '0:A->B', 1.0), ('C', '1:A->C', 2.0), ('D', '2:A->D', 4.0)]
+    [((34, 15), 'South', 1), ((33, 16), 'West', 1)]
     '''
-    startNode = sNode(None, 0, start)
+
+    #print problem.getStartState()
+    #print problem.getSuccessors(problem.getStartState())
+
+    startNode = sNode(start, None, 0)
+
+    #print startNode.state
+    #startNode.state = problem.getStartState()
+
+
 
     frontier = util.Stack()
     explored= []
     frontier.push(startNode)
-    while not frontier.isEmpty:
+    counter =0
+    stackSize = 1
+    while not frontier.isEmpty():
+
         curr = frontier.pop()
+        print curr
+        print curr.state
+        stackSize -= 1
         if problem.isGoalState(curr.state):
             return solution(curr)
         elif not curr.state in explored:
-            explored.append(curr)
-
-        for s in problem.getSuccessors(curr.state):
-            frontier.push(sNode(curr[0], "", s[2], s[0]))
-
+            explored.append(curr.state)
+            added = 0
+            print problem.getSuccessors(curr.state)
+            for s in problem.getSuccessors(curr.state):
+                st = s[0]
+                added += 1
+                #print explored
+                if st not in explored:
+                    frontier.push(sNode(s[0], s[1], s[2]))
+                    stackSize+=1
+            print added
+        counter += 1
+        #print counter
+        print stackSize
     return False
             
 def solution(node):
+    print "HERE"
     sol = []
-    while node.parent is not None:
-        sol.append()
+    while node.action is not None:
+        sol.append(None)
 
 
 
 class sNode:
-    parent = None
+    action = None
     costFromParent = None
     state = None
 
 
-    def __init__(self, parent, costFromParent, state):
-        self.parent = parent
-        self.costFromParent = costFromParent
+    def __init__(self, state, action, cost):
+        self.state = state
+        self.action = action
+        self.costFromParent = cost
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
