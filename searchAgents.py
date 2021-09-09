@@ -266,6 +266,23 @@ def euclideanHeuristic(position, problem, info={}):
 # This portion is incomplete.  Time to write code!  #
 #####################################################
 
+class CornerState:
+    curLocation = None
+
+    def __init__(self, curLoc, corners = None):
+        self.curLocation= curLoc
+        self.numCornersWithFood = 4
+        self.topRight = True
+        self.topLeft = True
+        self.botRight = True
+        self.botLeft = True
+        self.corners = corners
+        #all this stuff is changed when states are made
+        # eg. we make a child state. Child states get these field of p[arent, and might change some valuyes]
+        #if A is child of B, then A gets all food already eaten, and potentially one more
+
+
+
 class CornersProblem(search.SearchProblem):
     """
     This search problem finds paths through all four corners of a layout.
@@ -289,20 +306,28 @@ class CornersProblem(search.SearchProblem):
         # in initializing the problem
         "*** YOUR CODE HERE ***"
 
+
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        startstate = CornerState(self.startingPosition, self.corners)
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        return state.numCornersWithFood == 0
+
+        for corner in state.corners:
+            if state.hasFood(*corner):
+                return False
+        return True
+
 
     def getSuccessors(self, state):
         """
@@ -314,6 +339,13 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
+        
+        '''
+        successors are going to be states. Some states have fod eatenb. 
+        In those cases, we change food data when we create state
+        
+        '''
+        
 
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
@@ -325,6 +357,60 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
+            curLocation = state.curLocation
+            walls = self.walls
+
+            toAdd = []
+
+            x,y = curLocation
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            hitsWall = self.walls[nextx][nexty]
+            
+            #find state
+            if not hitsWall:
+                newLoc = (nextx,nexty)
+
+            newCorners = state.corners
+
+            suc = CornerState(newLoc, newCorners)
+
+            suc.numCornersWithFood = state.numCornersWithFood
+            suc.topRight = state.topRight
+            suc.topLeft = state.topLeft
+            suc.botRight = state.botRight
+            suc.botLeft = state.botLeft
+
+            top, right = self.walls.height-2, self.walls.width-2
+            #self.corners = ((1,1), (1,top), (right, 1), (right, top))
+            loc = (nextx, nexty)
+            if (nextx, nexty) in newCorners:
+                if loc == (1,1):
+                    if not suc.botLeft:
+                        suc.botLeft = False
+                        suc.numCornersWithFood -= 1
+                elif loc == (1,top):
+                    if not suc.topLeft:
+                        suc.topLeft = False
+                        suc.numCornersWithFood -= 1
+                elif loc == (right, 1):
+                    if not suc.botRight:
+                        suc.botRight = False
+                        suc.numCornersWithFood -= 1
+                elif loc == (right,top):
+                    if not suc.topRight:
+                        suc.topRight = False
+                        suc.numCornersWithFood -= 1
+
+            #append state
+            suc.append(suc)
+            suc.append(action)
+            cost = 1
+            #figure out heuristic
+            suc.append(cost)
+            
+            # [state, action, cost]
+
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
