@@ -114,7 +114,6 @@ def depthFirstSearch(problem):
             return solution(curr)
         elif not curr.state in explored:
             explored.append(curr.state)
-            print problem.getSuccessors(curr.state)
             for s in problem.getSuccessors(curr.state):
                 st = s[0]
                 if st not in explored:
