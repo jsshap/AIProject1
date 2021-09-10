@@ -397,22 +397,28 @@ class CornersProblem(search.SearchProblem):
             #self.corners = ((1,1), (1,top), (right, 1), (right, top))
             loc = (nextx, nexty)
             if (nextx, nexty) in newCorners:
+                print "YO"
+                print loc, (1,1), loc == (1,1)
                 if loc == (1,1):
-                    if not suc.botLeft:
+                    if suc.botLeft:
                         suc.botLeft = False
                         suc.numCornersWithFood -= 1
+                        print "AEFH"
                 elif loc == (1,top):
-                    if not suc.topLeft:
+                    if suc.topLeft:
                         suc.topLeft = False
                         suc.numCornersWithFood -= 1
+                        print "AFS"
                 elif loc == (right, 1):
-                    if not suc.botRight:
+                    if suc.botRight:
                         suc.botRight = False
                         suc.numCornersWithFood -= 1
+                        print "AFD"
                 elif loc == (right,top):
-                    if not suc.topRight:
+                    if suc.topRight:
                         suc.topRight = False
                         suc.numCornersWithFood -= 1
+                        print "FDZA"
 
             #append state
             toAdd.append(suc)
