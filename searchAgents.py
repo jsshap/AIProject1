@@ -331,7 +331,7 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        print state.numCornersWithFood
+        #print state.numCornersWithFood
         return state.numCornersWithFood == 0
 
         for corner in state.corners:
@@ -397,28 +397,22 @@ class CornersProblem(search.SearchProblem):
             #self.corners = ((1,1), (1,top), (right, 1), (right, top))
             loc = (nextx, nexty)
             if (nextx, nexty) in newCorners:
-                print "YO"
-                print loc, (1,1), loc == (1,1)
                 if loc == (1,1):
                     if suc.botLeft:
                         suc.botLeft = False
                         suc.numCornersWithFood -= 1
-                        print "AEFH"
                 elif loc == (1,top):
                     if suc.topLeft:
                         suc.topLeft = False
                         suc.numCornersWithFood -= 1
-                        print "AFS"
                 elif loc == (right, 1):
                     if suc.botRight:
                         suc.botRight = False
                         suc.numCornersWithFood -= 1
-                        print "AFD"
                 elif loc == (right,top):
                     if suc.topRight:
                         suc.topRight = False
                         suc.numCornersWithFood -= 1
-                        print "FDZA"
 
             #append state
             toAdd.append(suc)
@@ -469,10 +463,29 @@ def cornersHeuristic(state, problem):
 
     top, right = state.walls.height-2, state.walls.width-2
 
+    d = 0
 
-    d = getDistance(state.curLocation, corners)
+    topRightD = 0
+    topLeftD = 0
+    botRightD =0
+    botLeftD = 0
 
-    return 0 # Default to trivial solution
+
+    if state.topRight:
+        topRightD = getDistance(state.curLocation, (top,right))
+    if state.topLeft:
+        topLeftD = getDistance(state.curLocation, (top,1))
+    if state.botRight:
+        botRightD= getDistance(state.curLocation, (1,right))
+    if state.botLeft:
+        botLeftD= getDistance(state.curLocation, (1,1))
+
+    dists= [topRightD, topLeftD, botRightD, botLeftD]
+
+    d = topLeftD+topRightD+botLeftD+botRightD
+    #d = min(dists)
+
+    return d # Default to trivial solution
 
 def getDistance(pairA, pairB):
     x_one = pairA[0]
