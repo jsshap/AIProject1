@@ -417,7 +417,7 @@ class CornersProblem(search.SearchProblem):
             #append state
             toAdd.append(suc)
             toAdd.append(action)
-            cost = 1
+            cost = 1000
             #figure out heuristic
             toAdd.append(cost)
             successors.append(toAdd)
@@ -465,26 +465,38 @@ def cornersHeuristic(state, problem):
 
     d = 0
 
-    topRightD = 0
-    topLeftD = 0
-    botRightD =0
-    botLeftD = 0
+    topRightD = 0000
+    topLeftD = 0000
+    botRightD =0000
+    botLeftD = 0000
 
+    dists=[]
 
     if state.topRight:
         topRightD = getDistance(state.curLocation, (top,right))
+        dists.append(topRightD)
     if state.topLeft:
         topLeftD = getDistance(state.curLocation, (top,1))
+        dists.append(topLeftD)
     if state.botRight:
         botRightD= getDistance(state.curLocation, (1,right))
+        dists.append(botRightD)
     if state.botLeft:
         botLeftD= getDistance(state.curLocation, (1,1))
+        dists.append(botLeftD)
 
     dists= [topRightD, topLeftD, botRightD, botLeftD]
 
-    d = topLeftD+topRightD+botLeftD+botRightD
-    #d = min(dists)
-
+    #d = topLeftD+topRightD+botLeftD+botRightD
+    d = min(dists)
+    '''
+    if len(dists)>0:
+        
+        d = min(dists)
+        print(d)
+    else:
+        d = 00000
+    '''
     return d # Default to trivial solution
 
 def getDistance(pairA, pairB):
