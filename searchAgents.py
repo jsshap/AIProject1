@@ -269,7 +269,7 @@ def euclideanHeuristic(position, problem, info={}):
 class CornerState:
     curLocation = None
 
-    def __init__(self, curLoc, corners = None):
+    def __init__(self, curLoc, corners = None, walls = None):
         self.curLocation= curLoc
         self.numCornersWithFood = 4
         self.topRight = True
@@ -277,6 +277,7 @@ class CornerState:
         self.botRight = True
         self.botLeft = True
         self.corners = corners
+        self.walls = walls
         #all this stuff is changed when states are made
         # eg. we make a child state. Child states get these field of p[arent, and might change some valuyes]
         #if A is child of B, then A gets all food already eaten, and potentially one more
@@ -313,14 +314,13 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        startstate = CornerState(self.startingPosition, self.corners)
+        return CornerState(self.startingPosition, self.corners, self.walls)
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-
         return state.numCornersWithFood == 0
 
         for corner in state.corners:
@@ -368,12 +368,13 @@ class CornersProblem(search.SearchProblem):
             hitsWall = self.walls[nextx][nexty]
             
             #find state
-            if not hitsWall:
-                newLoc = (nextx,nexty)
+            if hitsWall:
+                continue
 
+            newLoc = (nextx,nexty)
             newCorners = state.corners
 
-            suc = CornerState(newLoc, newCorners)
+            suc = CornerState(newLoc, newCorners, walls = walls)
 
             suc.numCornersWithFood = state.numCornersWithFood
             suc.topRight = state.topRight
@@ -403,12 +404,12 @@ class CornersProblem(search.SearchProblem):
                         suc.numCornersWithFood -= 1
 
             #append state
-            suc.append(suc)
-            suc.append(action)
+            toAdd.append(suc)
+            toAdd.append(action)
             cost = 1
             #figure out heuristic
-            suc.append(cost)
-            
+            toAdd.append(cost)
+            successors.append(toAdd)
             # [state, action, cost]
 
 
@@ -446,7 +447,28 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
+    #print corners
+    #print walls
+
+    top, right = state.walls.height-2, state.walls.width-2
+
+
+    d = getDistance(state.curLocation, corners)
+
     return 0 # Default to trivial solution
+
+def getDistance(pairA, pairB):
+    x_one = pairA[0]
+    x_two = pairB[0]
+    y_one = pairA[1]
+    y_two = pairB[1]
+
+    diff_X= x_one - x_two
+    diff_Y = y_one - y_two
+
+    sum = diff_X**2 + diff_Y**2
+
+    return sum ** (.5)
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
