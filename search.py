@@ -153,6 +153,7 @@ def breadthFirstSearch(problem):
     frontier = util.Queue()
     explored= []
     frontier.push(startNode)
+    frontierSize = 0
     while not frontier.isEmpty():
         curr = frontier.pop()
         if problem.isGoalState(curr.state):
@@ -163,6 +164,8 @@ def breadthFirstSearch(problem):
                 st = s[0]
                 if st not in explored:
                     frontier.push(sNode(s[0], s[1], s[2], curr))
+                    frontierSize += 1
+        #print frontierSize
 
     return False
 

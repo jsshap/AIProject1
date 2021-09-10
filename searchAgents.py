@@ -282,6 +282,16 @@ class CornerState:
         # eg. we make a child state. Child states get these field of p[arent, and might change some valuyes]
         #if A is child of B, then A gets all food already eaten, and potentially one more
 
+    def __eq__(self, other):
+        if not (self.topLeft == other.topLeft and self.topRight == other.topRight and self.botRight == other.botRight and self.botLeft == other.botLeft):
+            return False
+        if not self.numCornersWithFood == other.numCornersWithFood:
+            return False
+        if not self.curLocation == other.curLocation:
+            return False
+        return True
+
+
 
 
 class CornersProblem(search.SearchProblem):
@@ -321,6 +331,7 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
+        print state.numCornersWithFood
         return state.numCornersWithFood == 0
 
         for corner in state.corners:
