@@ -417,7 +417,7 @@ class CornersProblem(search.SearchProblem):
             #append state
             toAdd.append(suc)
             toAdd.append(action)
-            cost = 1000
+            cost = 1
             #figure out heuristic
             toAdd.append(cost)
             successors.append(toAdd)
@@ -461,34 +461,98 @@ def cornersHeuristic(state, problem):
     #print corners
     #print walls
 
+    from util import manhattanDistance
+
     top, right = state.walls.height-2, state.walls.width-2
+    
 
     d = 0
-
+    
     topRightD = 0000
     topLeftD = 0000
-    botRightD =0000
+    botRightD = 0000
     botLeftD = 0000
 
     dists=[]
 
+
     if state.topRight:
-        topRightD = getDistance(state.curLocation, (top,right))
+        topRightD = manhattanDistance(state.curLocation, (right, top))
         dists.append(topRightD)
     if state.topLeft:
-        topLeftD = getDistance(state.curLocation, (top,1))
+        topLeftD = manhattanDistance(state.curLocation, (1, top))
         dists.append(topLeftD)
     if state.botRight:
-        botRightD= getDistance(state.curLocation, (1,right))
+        botRightD= manhattanDistance(state.curLocation, (right, 1))
         dists.append(botRightD)
     if state.botLeft:
-        botLeftD= getDistance(state.curLocation, (1,1))
+        botLeftD= manhattanDistance(state.curLocation, (1,1))
         dists.append(botLeftD)
 
-    dists= [topRightD, topLeftD, botRightD, botLeftD]
+    #dists=  [topRightD, topLeftD, botRightD, botLeftD]
+    '''
+    corners = [(right, top), (1,top), (right, 1), (1,1)]
+    z = zip (dists, corners)
+
+    nCorners = [ c[1] for c in z if not z[1] == 0]
+    dists = [d for d in dists if not d == 0]
+    
+    minIndex = 0
+    secondSmallest = 1
+
+    for i in range (len(dists)):
+        if dists[i] < secondSmallest and dists[i] >= dists[minIndex]:
+            secondSmallest = i
+        elif dists[i] < dists[minIndex]:
+            secondSmallest = minIndex
+            minIndex = i
+    print (dists), minIndex, secondSmallest
+    
+
+    if len(dists) ==0:
+        return 0
+    elif len(dists) ==1:
+        return dists[0]
+    elif len(dists)>=2:
+        locA = nCorners[minIndex]
+        locB = nCorners[secondSmallest]
+        avgLoc = ((locA[0]+locB[0])/2, (locB[1]+locA[1])/2)
+        return manhattanDistance(state.curLocation, avgLoc)
+
+
 
     #d = topLeftD+topRightD+botLeftD+botRightD
+
+    #print d, dists
+
+
+
+
+    '''
+    if len(dists) ==0:
+        return 0
+    elif len(dists) ==1:
+        return dists[0]
+    elif len(dists)==2:
+        return sum(dists)/2
+    elif len(dists) >= 3:
+        a = min(dists)
+        dists.remove(a)
+        b = min(dists)
+        return (a+b)/2
+
+
+
     d = min(dists)
+    
+    if state.numCornersWithFood == 0:
+        return 0
+
+
+    #d = totalDist
+        
+
+    
     '''
     if len(dists)>0:
         
@@ -497,7 +561,60 @@ def cornersHeuristic(state, problem):
     else:
         d = 00000
     '''
+    '''
+    numRemaining = state.numCornersWithFood
+    cornersRemaining = []
+    if state.topRight:
+        cornersRemaining.append((right, top))
+    if state.topLeft:
+        cornersRemaining.append((1, top))
+    if state.botRight:
+        cornersRemaining.append((right, 1))
+    if state.botLeft:
+        cornersRemaining.append((1, 1))
+
+    curLocation = state.curLocation
+    dists = [manhattanDistance(curLocation, corner) for corner in cornersRemaining]
+
+
+    minIndex = 0
+
+    for i in range (len(dists)):
+        if dists[i] < dists[minIndex]:
+            minIndex = i
+
+    if len(dists) == 0:
+        return 0
+
+    center = (right/2, top/2)
+    d += 2*dists[minIndex]
+    dists.remove(dists[minIndex])
+    cornersRemaining.remove(cornersRemaining[minIndex])
+    while len(cornersRemaining) >0 :
+        d += 2* manhattanDistance (center, cornersRemaining[0])
+        cornersRemaining.remove(cornersRemaining[0])
+    return d
+
+    '''
+    '''
+
+    curCorner = cornersRemaining[minIndex]
+    cornersRemaining.remove(curCorner)
+    while len(cornersRemaining) > 0:
+        closestCorner = cornersRemaining.pop(0)
+
+        d += manhattanDistance(curCorner, closestCorner)
+    '''
+
+
+    #which of these max 16 has shortest manhattan distance
+    #[a,b,c]
+
+
+
     return d # Default to trivial solution
+
+
 
 def getDistance(pairA, pairB):
     x_one = pairA[0]
