@@ -721,7 +721,25 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    #distance to average food
+    '''
+    locsOfFood = foodGrid.asList()
+    sumX=0
+    sumY=0
+    for f in locsOfFood:
+        sumX+=f[0]
+        sumY+=f[1]
+    if len(locsOfFood) == 0:
+        return 0
+    return max(util.manhattanDistance(position, (sumX/len(locsOfFood), sumY/len(locsOfFood))),.01)
+    '''
+
+    sumDists = 0
+    for f in locsOfFood:
+        sumDists += util.manhattanDistance(position, f)
+    return sumDists/len(locsOfFood)
+
+
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
