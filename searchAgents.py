@@ -291,6 +291,11 @@ class CornerState:
             return False
         return True
 
+    def getWalls(self):
+        return self.walls
+
+    def getPacmanPosition(self):
+        return self.curLocation
 
 
 
@@ -477,16 +482,16 @@ def cornersHeuristic(state, problem):
 
 
     if state.topRight:
-        topRightD = manhattanDistance(state.curLocation, (right, top))
+        topRightD = mazeDistance(state.curLocation, (right, top), state)
         dists.append(topRightD)
     if state.topLeft:
-        topLeftD = manhattanDistance(state.curLocation, (1, top))
+        topLeftD = mazeDistance(state.curLocation, (1, top), state)
         dists.append(topLeftD)
     if state.botRight:
-        botRightD= manhattanDistance(state.curLocation, (right, 1))
+        botRightD= mazeDistance(state.curLocation, (right, 1),state)
         dists.append(botRightD)
     if state.botLeft:
-        botLeftD= manhattanDistance(state.curLocation, (1,1))
+        botLeftD= mazeDistance(state.curLocation, (1,1), state)
         dists.append(botLeftD)
 
     #dists=  [topRightD, topLeftD, botRightD, botLeftD]
