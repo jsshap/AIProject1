@@ -547,80 +547,6 @@ def cornersHeuristic(state, problem):
         return (a+b)/2
 
 
-
-    d = min(dists)
-    
-    if state.numCornersWithFood == 0:
-        return 0
-
-
-    #d = totalDist
-        
-
-    
-    '''
-    if len(dists)>0:
-        
-        d = min(dists)
-        print(d)
-    else:
-        d = 00000
-    '''
-    '''
-    numRemaining = state.numCornersWithFood
-    cornersRemaining = []
-    if state.topRight:
-        cornersRemaining.append((right, top))
-    if state.topLeft:
-        cornersRemaining.append((1, top))
-    if state.botRight:
-        cornersRemaining.append((right, 1))
-    if state.botLeft:
-        cornersRemaining.append((1, 1))
-
-    curLocation = state.curLocation
-    dists = [manhattanDistance(curLocation, corner) for corner in cornersRemaining]
-
-
-    minIndex = 0
-
-    for i in range (len(dists)):
-        if dists[i] < dists[minIndex]:
-            minIndex = i
-
-    if len(dists) == 0:
-        return 0
-
-    center = (right/2, top/2)
-    d += 2*dists[minIndex]
-    dists.remove(dists[minIndex])
-    cornersRemaining.remove(cornersRemaining[minIndex])
-    while len(cornersRemaining) >0 :
-        d += 2* manhattanDistance (center, cornersRemaining[0])
-        cornersRemaining.remove(cornersRemaining[0])
-    return d
-
-    '''
-    '''
-
-    curCorner = cornersRemaining[minIndex]
-    cornersRemaining.remove(curCorner)
-    while len(cornersRemaining) > 0:
-        closestCorner = cornersRemaining.pop(0)
-
-        d += manhattanDistance(curCorner, closestCorner)
-    '''
-
-
-    #which of these max 16 has shortest manhattan distance
-    #[a,b,c]
-
-
-
-    return d # Default to trivial solution
-
-
-
 def getDistance(pairA, pairB):
     x_one = pairA[0]
     x_two = pairB[0]
@@ -738,13 +664,32 @@ def foodHeuristic(state, problem):
         return 0
     return max(util.manhattanDistance(position, (sumX/len(locsOfFood), sumY/len(locsOfFood))),.01)
     '''
+
+    #print problem.walls.asList()
+    
     locsOfFood = foodGrid.asList()
-    sumDists = 0
+    dists = []
     for f in locsOfFood:
-        sumDists += util.manhattanDistance(position, f)
+        dists.append(util.manhattanDistance(position, f))
     if len(locsOfFood) == 0:
         return 0
-    return sumDists/len(locsOfFood)
+    return sum(dists)/len(locsOfFood)
+    '''
+
+    walls = problem.walls
+    state.walls = walls
+    locsOfFood = foodGrid.asList()
+    dists = []
+    for f in locsOfFood:
+        dists.append(mazeDistance(position, f, state))
+    if len(locsOfFood) == 0:
+        return 0
+    return sum(dists)/len(locsOfFood)
+    
+    '''
+
+def eucDist (a , b):
+    return ((a[0]-b[0])**2+(a[1]-b[1])**2)**.5
 
 
 
