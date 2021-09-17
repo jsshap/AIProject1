@@ -653,40 +653,38 @@ def foodHeuristic(state, problem):
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
     #distance to average food
-    '''
-    locsOfFood = foodGrid.asList()
-    sumX=0
-    sumY=0
-    for f in locsOfFood:
-        sumX+=f[0]
-        sumY+=f[1]
-    if len(locsOfFood) == 0:
-        return 0
-    return max(util.manhattanDistance(position, (sumX/len(locsOfFood), sumY/len(locsOfFood))),.01)
-    '''
+    
+
 
     #print problem.walls.asList()
     
-    locsOfFood = foodGrid.asList()
-    dists = []
-    for f in locsOfFood:
-        dists.append(util.manhattanDistance(position, f))
-    if len(locsOfFood) == 0:
-        return 0
-    return sum(dists)/len(locsOfFood)
-    '''
+    mazeState = tempState(problem, position)
 
-    walls = problem.walls
-    state.walls = walls
     locsOfFood = foodGrid.asList()
     dists = []
     for f in locsOfFood:
-        dists.append(mazeDistance(position, f, state))
+        dists.append(mazeDistance(position, f, mazeState))
     if len(locsOfFood) == 0:
         return 0
     return sum(dists)/len(locsOfFood)
+
     
-    '''
+    
+    
+
+class tempState:
+    problem = None
+    position = None
+
+    def __init__(self, problem, position):
+        self.problem = problem
+        self.position = [position]
+
+    def getWalls(self):
+        return self.problem.walls
+
+    def getPacmanPosition(self):
+        return self.position
 
 def eucDist (a , b):
     return ((a[0]-b[0])**2+(a[1]-b[1])**2)**.5
